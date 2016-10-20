@@ -36,7 +36,7 @@ Method parameters are `$callback`, `$maxAttempts`, `$strategy`, `$waitCap`, `$us
 
 ## Backoff class usage
  
-You can also create an instance of the Backoff class. 
+The Backoff class constructor parameters are `$maxAttempts`, `$strategy`, `$waitCap`, `$useJitter`.
 
 ```
 $backoff = new Backoff(10, 'exponential', 10000, true);
@@ -119,11 +119,23 @@ You can create the strategy instance yourself in order to modify these defaults:
 ```
 backoff(function() {
     ...
-}, 10, new ConstantStrategy(500));
+}, 10, new LinearStrategy(500));
 
 // OR
 
-$backoff = new Backoff(10, new ConstantStrategy(500));
+$backoff = new Backoff(10, new LinearStrategy(500));
+```
+
+You can also pass in an integer as the strategy, will translates to a ConstantStrategy with the integer as the base time in milliseconds:
+
+```
+backoff(function() {
+    ...
+}, 10, 1000);
+
+// OR
+
+$backoff = new Backoff(10, 1000);
 ```
 
 Finally, you can pass in a closure as the strategy if you wish. This closure should receive an integer `attempt` and return a sleep time in milliseconds.
