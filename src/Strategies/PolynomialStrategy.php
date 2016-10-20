@@ -5,10 +5,6 @@ namespace STS\Backoff\Strategies;
  * Class PolynomialStrategy
  * @package STS\Backoff\Strategies
  */
-/**
- * Class PolynomialStrategy
- * @package STS\Backoff\Strategies
- */
 class PolynomialStrategy extends AbstractStrategy
 {
     /**
