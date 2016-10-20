@@ -18,6 +18,30 @@ class BackoffTest extends TestCase
         $this->assertFalse($b->jitterEnabled());
     }
 
+    public function testChangingStaticDefaults()
+    {
+        Backoff::$defaultMaxAttempts = 15;
+        Backoff::$defaultStrategy = "constant";
+        Backoff::$defaultJitterEnabled = true;
+
+        $b = new Backoff();
+
+        $this->assertEquals(15, $b->getMaxAttempts());
+        $this->assertInstanceOf(ConstantStrategy::class, $b->getStrategy());
+        $this->assertTrue($b->jitterEnabled());
+
+        Backoff::$defaultStrategy = new LinearStrategy(250);
+
+        $b = new Backoff();
+
+        $this->assertInstanceOf(LinearStrategy::class, $b->getStrategy());
+
+        // Put them back!
+        Backoff::$defaultMaxAttempts = 5;
+        Backoff::$defaultStrategy = "polynomial";
+        Backoff::$defaultJitterEnabled = false;
+    }
+
     public function testConstructorParams()
     {
         $b = new Backoff(10, "linear");

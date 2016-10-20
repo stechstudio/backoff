@@ -58,6 +58,18 @@ $result = $backoff
     });
 ```
 
+## Changing defaults
+
+If you find you want different defaults, you can modify them via static class properties:
+
+```
+Backoff::$defaultMaxAttempts = 10;
+Backoff::$defaultStrategy = 'exponential';
+Backoff::$defaultJitterEnabled = true;
+```
+
+You might want to do this somewhere in your application bootstrap for example. These defaults will be used anytime you create an instance of the Backoff class or use the `backoff()` helper function.
+
 ## Strategies
 
 There are four built-in strategies available: constant, linear, polynomial, and exponential.
