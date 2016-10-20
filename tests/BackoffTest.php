@@ -15,6 +15,7 @@ class BackoffTest extends TestCase
 
         $this->assertEquals(5, $b->getMaxAttempts());
         $this->assertInstanceOf(PolynomialStrategy::class, $b->getStrategy());
+        $this->assertFalse($b->jitterEnabled());
     }
 
     public function testConstructorParams()
@@ -181,5 +182,23 @@ class BackoffTest extends TestCase
 
         $this->assertEquals(5, $attempt);
         $this->assertEquals("success", $result);
+    }
+
+    public function testJitter()
+    {
+        $b = new Backoff(10, new ConstantStrategy(1000));
+
+        // First without jitter
+        $this->assertEquals(1000, $b->getWaitTime(1));
+
+        // Now with jitter
+        $b->enableJitter();
+
+        // Because it's still possible that I could get 1000 back even with jitter, I'm going to generate two
+        $waitTime1 = $b->getWaitTime(1);
+        $waitTime2 = $b->getWaitTime(1);
+
+        // And I'm banking that I didn't hit the _extremely_ rare chance that both were randomly chosen to be 1000 still
+        $this->assertTrue($waitTime1 < 1000 || $waitTime2 < 1000);
     }
 }

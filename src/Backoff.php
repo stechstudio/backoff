@@ -25,6 +25,11 @@ class Backoff
     public static $defaultMaxAttempts = 5;
 
     /**
+     * @var bool
+     */
+    public static $defaultJitterEnabled = false;
+
+    /**
      * This callable should take an 'attempt' integer, and return a wait time in milliseconds
      *
      * @var callable
@@ -54,6 +59,11 @@ class Backoff
     protected $waitCap;
 
     /**
+     * @var bool
+     */
+    protected $useJitter = false;
+
+    /**
      * @var array
      */
     protected $exceptions = [];
@@ -62,11 +72,13 @@ class Backoff
      * @param null $maxAttempts
      * @param null $strategy
      * @param null $waitCap
+     * @param null $useJitter
      */
-    public function __construct($maxAttempts = null, $strategy = null, $waitCap = null)
+    public function __construct($maxAttempts = null, $strategy = null, $waitCap = null, $useJitter = null)
     {
         $this->setMaxAttempts($maxAttempts ?: self::$defaultMaxAttempts);
         $this->setStrategy($strategy ?: self::$defaultStrategy);
+        $this->setJitter($useJitter ?: self::$defaultJitterEnabled);
         $this->setWaitCap($waitCap);
     }
 
@@ -88,10 +100,14 @@ class Backoff
 
     /**
      * @param $cap
+     *
+     * @return $this
      */
     public function setWaitCap($cap)
     {
         $this->waitCap = $cap;
+
+        return $this;
     }
 
     /**
@@ -100,6 +116,43 @@ class Backoff
     public function getWaitCap()
     {
         return $this->waitCap;
+    }
+
+    /**
+     * @param $useJitter
+     *
+     * @return $this
+     */
+    public function setJitter($useJitter)
+    {
+        $this->useJitter = $useJitter;
+
+        return $this;
+    }
+
+    /**
+     *
+     */
+    public function enableJitter()
+    {
+        $this->setJitter(true);
+
+        return $this;
+    }
+
+    /**
+     *
+     */
+    public function disableJitter()
+    {
+        $this->setJitter(false);
+
+        return $this;
+    }
+
+    public function jitterEnabled()
+    {
+        return $this->useJitter;
     }
 
     /**
@@ -112,10 +165,14 @@ class Backoff
 
     /**
      * @param mixed $strategy
+     *
+     * @return $this
      */
     public function setStrategy($strategy)
     {
         $this->strategy = $this->buildStrategy($strategy);
+
+        return $this;
     }
 
     /**
@@ -187,8 +244,30 @@ class Backoff
     {
         $waitTime = call_user_func($this->getStrategy(), $attempt);
 
+        return $this->jitter($this->cap($waitTime));
+    }
+
+    /**
+     * @param $waitTime
+     *
+     * @return mixed
+     */
+    protected function cap($waitTime)
+    {
         return is_int($this->getWaitCap())
             ? min($this->getWaitCap(), $waitTime)
+            : $waitTime;
+    }
+
+    /**
+     * @param $waitTime
+     *
+     * @return int
+     */
+    protected function jitter($waitTime)
+    {
+        return $this->jitterEnabled()
+            ? mt_rand(0, $waitTime)
             : $waitTime;
     }
 }
