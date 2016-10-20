@@ -1,6 +1,6 @@
 {
     "name": "stechstudio/backoff",
-    "description": "Provides retry functionality with multiple backoff strategies",
+    "description": "PHP library providing retry functionality with multiple backoff strategies and jitter support",
     "license": "MIT",
     "authors": [
         {
