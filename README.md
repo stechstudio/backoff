@@ -86,7 +86,7 @@ This strategy will sleep for `attempt * baseTime`, providing linear backoff star
 $strategy = new PolynomialStrategy(100, 3);
 ```
 
-This strategy will sleep for `(attempt^degree) * baseTime`. In this example that means `(attempt^3) * 100`.
+This strategy will sleep for `(attempt^degree) * baseTime`, so in this case `(attempt^3) * 100`.
 
 The default degree if none provided is 2, effectively quadratic time.
 
@@ -96,7 +96,7 @@ The default degree if none provided is 2, effectively quadratic time.
 $strategy = new ExponentialStrategy(100);
 ```
 
-This strategy will sleep for `(baseTime^attempt)`. Naturally this will result in very fast growth in your backoff time.
+This strategy will sleep for `(2^attempt) * baseTime`.
 
 ## Specifying strategy
 
