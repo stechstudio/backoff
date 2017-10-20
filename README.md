@@ -20,7 +20,7 @@ By default the backoff is quadratic with a 100ms base time (`attempt^2 * 100`), 
 
 ## Quickstart
 
-The simplest way to us Backoff is with the global `backoff` helper function:
+The simplest way to use Backoff is with the global `backoff` helper function:
 
 ```
 $result = backoff(function() {
