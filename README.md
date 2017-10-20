@@ -30,12 +30,12 @@ $result = backoff(function() {
 
 If successful `$result` will contain the result of the closure. If max attempts are exceeded the inner exception is re-thrown.
 
-You can of course provide other options via the helper method if needed. 
+You can of course provide other options via the helper method if needed.
 
 Method parameters are `$callback`, `$maxAttempts`, `$strategy`, `$waitCap`, `$useJitter`.
 
 ## Backoff class usage
- 
+
 The Backoff class constructor parameters are `$maxAttempts`, `$strategy`, `$waitCap`, `$useJitter`.
 
 ```
@@ -156,7 +156,7 @@ Finally, you can pass in a closure as the strategy if you wish. This closure sho
 backoff(function() {
     ...
 }, 10, function($attempt) {
-    return (100 * $attempt) + 5000; 
+    return (100 * $attempt) + 5000;
 });
 
 // OR
@@ -176,11 +176,25 @@ This cap can be provided as the fourth argument to the `backoff` helper function
 ## Jitter
 
 If you have a lot of clients starting a job at the same time and encountering failures, any of the above backoff strategies could mean the workers continue to collide at each retry.
- 
+
 The solution for this is to add randomness. See here for a good explanation:
 
 https://www.awsarchitectureblog.com/2015/03/backoff.html
 
 You can enable jitter by passing `true` in as the fifth argument to the `backoff` helper function, or by using the `enableJitter()` method on the Backoff class.
- 
+
 We use the "FullJitter" approach outlined in the above article, where a random number between 0 and the sleep time provided by your selected strategy is used.
+
+## Custom retry decider
+
+By default Backoff will retry if an exception is encountered, and if it has not yet hit max retries.
+
+You may provide your own retry decider for more advanced use cases. Perhaps you want to retry based on time rather than number of retries, or perhaps there are scenarios where you would want retry even when an exception was not encountered.
+
+Provide the decider as a callback, or an instance of a class with an `__invoke` method. Backoff will hand it four parameters: the current attempt, max attempts, the last result received, and the exception if one was encountered. Your decider needs to return true or false.
+
+```php
+$backoff->setDecider(function($attempt, $maxAttempts, $result, $exception = null) {
+    return someCustomLogic();
+})
+```
