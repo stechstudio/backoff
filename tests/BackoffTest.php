@@ -88,7 +88,7 @@ class BackoffTest extends TestCase
     {
         $b = new Backoff();
 
-        $strategy = function() {
+        $strategy = function () {
             return "hi there";
         };
 
@@ -155,7 +155,7 @@ class BackoffTest extends TestCase
     {
         $b = new Backoff();
 
-        $result = $b->run(function() {
+        $result = $b->run(function () {
             return "done";
         });
 
@@ -165,11 +165,11 @@ class BackoffTest extends TestCase
     public function testFirstAttemptDoesNotCallStrategy()
     {
         $b = new Backoff();
-        $b->setStrategy(function() {
+        $b->setStrategy(function () {
             throw new \Exception("We shouldn't be here");
         });
 
-        $result = $b->run(function() {
+        $result = $b->run(function () {
             return "done";
         });
 
@@ -183,7 +183,7 @@ class BackoffTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage("failure");
 
-        $b->run(function() {
+        $b->run(function () {
             throw new \Exception("failure");
         });
     }
@@ -194,10 +194,10 @@ class BackoffTest extends TestCase
 
         $attempt = 0;
 
-        $result = $b->run(function() use(&$attempt) {
+        $result = $b->run(function () use (&$attempt) {
             $attempt++;
 
-            if($attempt < 5) {
+            if ($attempt < 5) {
                 throw new \Exception("failure");
             }
 
@@ -205,6 +205,38 @@ class BackoffTest extends TestCase
         });
 
         $this->assertEquals(5, $attempt);
+        $this->assertEquals("success", $result);
+    }
+
+    public function testCustomDeciderAttempts()
+    {
+        $b = new Backoff(10, new ConstantStrategy(0));
+        $b->setDecider(
+            function ($retry, $maxAttempts, $result = null, $exception = null) {
+                if ($retry >= $maxAttempts || $result == "success") {
+                    return false;
+                }
+                return true;
+            }
+        );
+
+        $attempt = 0;
+
+        $result = $b->run(function () use (&$attempt) {
+            $attempt++;
+
+            if ($attempt < 5) {
+                throw new \Exception("failure");
+            }
+
+            if ($attempt < 7) {
+                return 'not yet';
+            }
+
+            return "success";
+        });
+
+        $this->assertEquals(7, $attempt);
         $this->assertEquals("success", $result);
     }
 

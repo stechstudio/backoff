@@ -69,17 +69,30 @@ class Backoff
     protected $exceptions = [];
 
     /**
+     * This will decide whether to retry or not.
+     * @var callable
+     */
+    protected $decider;
+
+    /**
      * @param null $maxAttempts
      * @param null $strategy
      * @param null $waitCap
      * @param null $useJitter
+     * @param null $decider
      */
-    public function __construct($maxAttempts = null, $strategy = null, $waitCap = null, $useJitter = null)
-    {
+    public function __construct(
+        $maxAttempts = null,
+        $strategy = null,
+        $waitCap = null,
+        $useJitter = null,
+        $decider = null
+    ) {
         $this->setMaxAttempts($maxAttempts ?: self::$defaultMaxAttempts);
         $this->setStrategy($strategy ?: self::$defaultStrategy);
         $this->setJitter($useJitter ?: self::$defaultJitterEnabled);
         $this->setWaitCap($waitCap);
+        $this->setDecider($decider ?: $this->getDefaultDecider());
     }
 
     /**
@@ -209,18 +222,55 @@ class Backoff
      */
     public function run($callback)
     {
-        for ($attempt = 0; $attempt < $this->getMaxAttempts(); $attempt++) {
+        $attempt = 0;
+        $result = null;
+        $exception = null;
+        $try = true;
+        $decider = $this->decider;
 
+        while ($try) {
             $this->wait($attempt);
-
             try {
-                return call_user_func($callback);
+                $result = null;
+                $exception = null;
+                $result = call_user_func($callback);
             } catch (Exception $e) {
                 $this->exceptions[] = $e;
+                $exception = $e;
             }
+            $try = $decider(++$attempt, $this->getMaxAttempts(), $result, $exception);
         }
 
-        throw $e;
+        if (! is_null($exception)) {
+            throw  $exception;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Sets the decider callback
+     * @param $callback
+     * @return $this
+     */
+    public function setDecider($callback)
+    {
+        $this->decider = $callback;
+        return $this;
+    }
+
+    /**
+     * Gets a default decider that simply check exceptions and maxattempts
+     * @return \Closure
+     */
+    protected function getDefaultDecider()
+    {
+        return function ($retry, $maxAttempts, $result = null, $exception = null) {
+            if ($retry >= $maxAttempts || is_null($exception)) {
+                return false;
+            }
+            return true;
+        };
     }
 
     /**
