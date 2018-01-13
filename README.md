@@ -1,5 +1,10 @@
 # PHP Backoff
 
+[![Build](https://img.shields.io/scrutinizer/build/g/stechstudio/backoff.svg?style=flat-square)](https://scrutinizer-ci.com/g/stechstudio/backoff)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![Quality Score](https://img.shields.io/scrutinizer/g/stechstudio/backoff.svg?style=flat-square)](https://scrutinizer-ci.com/g/stechstudio/backoff)
+[![Total Downloads](https://img.shields.io/packagist/dt/stechstudio/backoff.svg?style=flat-square)](https://packagist.org/packages/stechstudio/backoff)
+
 Easily wrap your code with retry functionality. This library provides:
 
  1. 4 backoff strategies (plus the ability to use your own)
