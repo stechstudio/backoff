@@ -282,13 +282,11 @@ class Backoff
     protected function getDefaultDecider()
     {
         return function ($retry, $maxAttempts, $result = null, $exception = null) {
-            if ($retry >= $maxAttempts || is_null($exception)) {
-                if( ($retry >= $maxAttempts) && (! is_null($exception)) ) {
-                    throw  $exception;
-                }
-                return false;
+            if($retry >= $maxAttempts && ! is_null($exception)) {
+                throw  $exception;
             }
-            return true;
+
+            return $retry < $maxAttempts && !is_null($exception);
         };
     }
 
