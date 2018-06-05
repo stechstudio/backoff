@@ -10,6 +10,7 @@ Easily wrap your code with retry functionality. This library provides:
  1. 4 backoff strategies (plus the ability to use your own)
  2. Optional jitter / randomness to spread out retries and minimize collisions
  3. Wait time cap
+ 4. Callbacks for custom retry logic or error handling
 
 ## Installation
 
@@ -206,7 +207,7 @@ $backoff->setDecider(function($attempt, $maxAttempts, $result, $exception = null
 
 ## Error handler callback
 
-You can provide a custom error handler callback anytime an exception occurs. This is a useful place to do logging for example.
+You can provide a custom error handler to be notified anytime an exception occurs, even if we have yet to reach max attempts. This is a useful place to do logging for example.
 
 ```php
 $backoff->setErrorHandler(function($exception, $attempt, $maxAttempts) {
