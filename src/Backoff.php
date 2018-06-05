@@ -226,7 +226,6 @@ class Backoff
         $result = null;
         $exception = null;
         $try = true;
-        $decider = $this->decider;
 
         while ($try) {
             $this->wait($attempt);
@@ -238,7 +237,7 @@ class Backoff
                 $this->exceptions[] = $e;
                 $exception = $e;
             }
-            $try = $decider(++$attempt, $this->getMaxAttempts(), $result, $exception);
+            $try = call_user_func($this->decider, ++$attempt, $this->getMaxAttempts(), $result, $exception);
         }
 
         if (! is_null($exception)) {
