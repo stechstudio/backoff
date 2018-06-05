@@ -223,26 +223,22 @@ class Backoff
     public function run($callback)
     {
         $attempt = 0;
-        $result = null;
-        $exception = null;
         $try = true;
         $decider = $this->decider;
 
         while ($try) {
+
+            $result = null;
+            $exception = null;
+
             $this->wait($attempt);
             try {
-                $result = null;
-                $exception = null;
                 $result = call_user_func($callback);
             } catch (Exception $e) {
                 $this->exceptions[] = $e;
                 $exception = $e;
             }
             $try = $decider(++$attempt, $this->getMaxAttempts(), $result, $exception);
-        }
-
-        if (! is_null($exception)) {
-            throw  $exception;
         }
 
         return $result;
@@ -267,6 +263,9 @@ class Backoff
     {
         return function ($retry, $maxAttempts, $result = null, $exception = null) {
             if ($retry >= $maxAttempts || is_null($exception)) {
+                if( ($retry >= $maxAttempts) && (! is_null($exception)) ) {
+                    throw  $exception;
+                }
                 return false;
             }
             return true;
