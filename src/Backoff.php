@@ -75,6 +75,12 @@ class Backoff
     protected $decider;
 
     /**
+     * This receive any exceptions we encounter.
+     * @var callable
+     */
+    protected $errorHandler;
+
+    /**
      * @param null $maxAttempts
      * @param null $strategy
      * @param null $waitCap
@@ -238,6 +244,10 @@ class Backoff
                 $exception = $e;
             }
             $try = call_user_func($this->decider, ++$attempt, $this->getMaxAttempts(), $result, $exception);
+
+            if($try && isset($this->errorHandler)) {
+                call_user_func($this->errorHandler, $exception, $attempt, $this->getMaxAttempts());
+            }
         }
 
         if (! is_null($exception)) {
@@ -255,6 +265,17 @@ class Backoff
     public function setDecider($callback)
     {
         $this->decider = $callback;
+        return $this;
+    }
+
+    /**
+     * Sets the error handler callback
+     * @param $callback
+     * @return $this
+     */
+    public function setErrorHandler($callback)
+    {
+        $this->errorHandler = $callback;
         return $this;
     }
 

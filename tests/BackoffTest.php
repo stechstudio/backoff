@@ -241,6 +241,32 @@ class BackoffTest extends TestCase
         $this->assertEquals("success", $result);
     }
 
+    public function testErrorHandler()
+    {
+        $log = [];
+
+        $b = new Backoff(10, new ConstantStrategy(0));
+        $b->setErrorHandler(function($exception, $attempt, $maxAttempts) use(&$log) {
+            $log[] = "Attempt $attempt of $maxAttempts: " . $exception->getMessage();
+        });
+
+        $attempt = 0;
+
+        $result = $b->run(function () use (&$attempt) {
+            $attempt++;
+
+            if ($attempt < 5) {
+                throw new \Exception("failure");
+            }
+
+            return "success";
+        });
+
+        $this->assertEquals(4, count($log));
+        $this->assertEquals("Attempt 4 of 10: failure", array_pop($log));
+        $this->assertEquals("success", $result);
+    }
+
     public function testJitter()
     {
         $b = new Backoff(10, new ConstantStrategy(1000));
