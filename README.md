@@ -201,5 +201,15 @@ Provide the decider as a callback, or an instance of a class with an `__invoke` 
 ```php
 $backoff->setDecider(function($attempt, $maxAttempts, $result, $exception = null) {
     return someCustomLogic();
-})
+});
+```
+
+## Error handler callback
+
+You can provide a custom error handler callback anytime an exception occurs. This is a useful place to do logging for example.
+
+```php
+$backoff->setErrorHandler(function($exception, $attempt, $maxAttempts) {
+    Log::error("On run $attempt we hit a problem: " . $exception->getMessage());
+});
 ```
