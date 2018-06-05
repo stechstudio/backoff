@@ -148,7 +148,8 @@ class BackoffTest extends TestCase
         $elapsedMS =  ($end - $start) * 1000;
 
         // We expect that this took just barely over the 100ms we asked for
-        $this->assertTrue($elapsedMS > 100 && $elapsedMS < 110);
+        $this->assertTrue($elapsedMS > 90 && $elapsedMS < 150,
+            sprintf("Expected elapsedMS between 100 & 110, got: $elapsedMS\n"));
     }
 
     public function testSuccessfulWork()

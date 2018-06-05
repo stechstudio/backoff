@@ -63,6 +63,7 @@ class HelpersTest extends TestCase
         $elapsedMS = ($end - $start) * 1000;
 
         // We expect that this took just a bit over the 100ms that we slept
-        $this->assertTrue($elapsedMS > 100 && $elapsedMS < 200);
+        $this->assertTrue($elapsedMS > 90 && $elapsedMS < 150,
+            sprintf("Expected elapsedMS between 90 & 200, got: $elapsedMS\n"));
     }
 }
