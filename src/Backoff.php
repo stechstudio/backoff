@@ -229,15 +229,15 @@ class Backoff
     public function run($callback)
     {
         $attempt = 0;
-        $result = null;
-        $exception = null;
         $try = true;
 
         while ($try) {
+
+            $result = null;
+            $exception = null;
+
             $this->wait($attempt);
             try {
-                $result = null;
-                $exception = null;
                 $result = call_user_func($callback);
             } catch (Exception $e) {
                 $this->exceptions[] = $e;
@@ -248,10 +248,6 @@ class Backoff
             if($try && isset($this->errorHandler)) {
                 call_user_func($this->errorHandler, $exception, $attempt, $this->getMaxAttempts());
             }
-        }
-
-        if (! is_null($exception)) {
-            throw  $exception;
         }
 
         return $result;
@@ -287,6 +283,9 @@ class Backoff
     {
         return function ($retry, $maxAttempts, $result = null, $exception = null) {
             if ($retry >= $maxAttempts || is_null($exception)) {
+                if( ($retry >= $maxAttempts) && (! is_null($exception)) ) {
+                    throw  $exception;
+                }
                 return false;
             }
             return true;
