@@ -21,7 +21,7 @@ abstract class AbstractStrategy
     /**
      * AbstractStrategy constructor.
      *
-     * @param null $base
+     * @param int $base
      */
     public function __construct($base = null)
     {
@@ -31,14 +31,14 @@ abstract class AbstractStrategy
     }
 
     /**
-     * @param $attempt
+     * @param int $attempt
      *
      * @return int      Time to wait in ms
      */
     abstract public function getWaitTime($attempt);
 
     /**
-     * @param $attempt
+     * @param int $attempt
      *
      * @return int
      */

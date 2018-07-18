@@ -47,14 +47,14 @@ class Backoff
     ];
 
     /**
-     * @var
+     * @var int
      */
     protected $maxAttempts;
 
     /**
      * The max wait time you want to allow, regardless of what the strategy says
      *
-     * @var int     In milliseconds
+     * @var int|null     In milliseconds
      */
     protected $waitCap;
 
@@ -81,11 +81,11 @@ class Backoff
     protected $errorHandler;
 
     /**
-     * @param null $maxAttempts
-     * @param null $strategy
-     * @param null $waitCap
-     * @param null $useJitter
-     * @param null $decider
+     * @param int $maxAttempts
+     * @param mixed $strategy
+     * @param int $waitCap
+     * @param bool $useJitter
+     * @param callable $decider
      */
     public function __construct(
         $maxAttempts = null,
@@ -118,7 +118,7 @@ class Backoff
     }
 
     /**
-     * @param $cap
+     * @param int|null $cap
      *
      * @return $this
      */
@@ -130,7 +130,7 @@ class Backoff
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getWaitCap()
     {
@@ -138,7 +138,7 @@ class Backoff
     }
 
     /**
-     * @param $useJitter
+     * @param bool $useJitter
      *
      * @return $this
      */
@@ -221,7 +221,7 @@ class Backoff
     }
 
     /**
-     * @param $callback
+     * @param callable $callback
      *
      * @return mixed
      * @throws Exception
@@ -255,7 +255,7 @@ class Backoff
 
     /**
      * Sets the decider callback
-     * @param $callback
+     * @param callable $callback
      * @return $this
      */
     public function setDecider($callback)
@@ -266,7 +266,7 @@ class Backoff
 
     /**
      * Sets the error handler callback
-     * @param $callback
+     * @param callable $callback
      * @return $this
      */
     public function setErrorHandler($callback)
@@ -291,7 +291,7 @@ class Backoff
     }
 
     /**
-     * @param $attempt
+     * @param int $attempt
      */
     public function wait($attempt)
     {
@@ -303,7 +303,7 @@ class Backoff
     }
 
     /**
-     * @param $attempt
+     * @param int $attempt
      *
      * @return int
      */
@@ -315,7 +315,7 @@ class Backoff
     }
 
     /**
-     * @param $waitTime
+     * @param int $waitTime
      *
      * @return mixed
      */
@@ -327,7 +327,7 @@ class Backoff
     }
 
     /**
-     * @param $waitTime
+     * @param int $waitTime
      *
      * @return int
      */

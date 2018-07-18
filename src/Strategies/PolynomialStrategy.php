@@ -8,15 +8,15 @@ namespace STS\Backoff\Strategies;
 class PolynomialStrategy extends AbstractStrategy
 {
     /**
-     * @var int|null
+     * @var int
      */
     protected $degree = 2;
 
     /**
      * PolynomialStrategy constructor.
      *
-     * @param null $degree
-     * @param null $base
+     * @param int $degree
+     * @param int $base
      */
     public function __construct($base = null, $degree = null)
     {
@@ -28,13 +28,13 @@ class PolynomialStrategy extends AbstractStrategy
     }
 
     /**
-     * @param $attempt
+     * @param int $attempt
      *
      * @return int
      */
     public function getWaitTime($attempt)
     {
-        return pow($attempt, $this->degree) * $this->base;
+        return (int) pow($attempt, $this->degree) * $this->base;
     }
 
     /**

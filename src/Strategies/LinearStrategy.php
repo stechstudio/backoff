@@ -8,7 +8,7 @@ namespace STS\Backoff\Strategies;
 class LinearStrategy extends AbstractStrategy
 {
     /**
-     * @param $attempt
+     * @param int $attempt
      *
      * @return int
      */
