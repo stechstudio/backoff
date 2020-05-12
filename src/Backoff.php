@@ -239,6 +239,12 @@ class Backoff
             $this->wait($attempt);
             try {
                 $result = call_user_func($callback);
+            } catch (\Throwable $e) {
+                if ($e instanceof \Error) {
+                    $e = new Exception($e->getMessage(), $e->getCode(), $e);
+                }
+                $this->exceptions[] = $e;
+                $exception = $e;
             } catch (Exception $e) {
                 $this->exceptions[] = $e;
                 $exception = $e;

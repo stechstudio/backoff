@@ -1,6 +1,7 @@
 <?php
 namespace STS\Backoff;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use STS\Backoff\Strategies\ConstantStrategy;
 use STS\Backoff\Strategies\ExponentialStrategy;
@@ -186,6 +187,23 @@ class BackoffTest extends TestCase
 
         $b->run(function () {
             throw new \Exception("failure");
+        });
+    }
+
+    public function testHandleErrorsPhp7()
+    {
+        $b = new Backoff(2, new ConstantStrategy(0));
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("Modulo by zero");
+
+        $b->run(function () {
+            if (version_compare(PHP_VERSION, '7.0.0') >= 0) {
+                return 1 % 0;
+            } else {
+                // Handle version < 7
+                throw new Exception("Modulo by zero");
+            }
         });
     }
 
