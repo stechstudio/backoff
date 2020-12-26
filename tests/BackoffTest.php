@@ -19,6 +19,21 @@ class BackoffTest extends TestCase
         $this->assertFalse($b->jitterEnabled());
     }
 
+    public function testFluidApi()
+    {
+        $b = new Backoff();
+        $result = $b
+          ->setStrategy('constant')
+          ->setMaxAttempts(10)
+          ->setWaitCap(5)
+          ->enableJitter();
+
+        $this->assertEquals(10, $b->getMaxAttempts());
+        $this->assertEquals(5, $b->getWaitCap());
+        $this->assertTrue($b->jitterEnabled());
+        $this->assertInstanceOf(ConstantStrategy::class, $b->getStrategy());
+    }
+
     public function testChangingStaticDefaults()
     {
         Backoff::$defaultMaxAttempts = 15;

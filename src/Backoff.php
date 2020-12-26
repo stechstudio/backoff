@@ -107,6 +107,8 @@ class Backoff
     public function setMaxAttempts($attempts)
     {
         $this->maxAttempts = $attempts;
+        
+         return $this;
     }
 
     /**
