@@ -29,7 +29,7 @@ By default the backoff is quadratic with a 100ms base time (`attempt^2 * 100`), 
 
 The simplest way to use Backoff is with the global `backoff` helper function:
 
-```
+```php
 $result = backoff(function() {
     return doSomeWorkThatMightFail();
 });
@@ -45,7 +45,7 @@ Method parameters are `$callback`, `$maxAttempts`, `$strategy`, `$waitCap`, `$us
 
 The Backoff class constructor parameters are `$maxAttempts`, `$strategy`, `$waitCap`, `$useJitter`.
 
-```
+```php
 $backoff = new Backoff(10, 'exponential', 10000, true);
 $result = $backoff->run(function() {
     return doSomeWorkThatMightFail();
@@ -54,7 +54,7 @@ $result = $backoff->run(function() {
 
 Or if you are injecting the Backoff class with a dependency container, you can set it up with setters after the fact. Note that setters are chainable.
 
-```
+```php
 // Assuming a fresh instance of $backoff was handed to you
 $result = $backoff
     ->setStrategy('constant')
@@ -69,7 +69,7 @@ $result = $backoff
 
 If you find you want different defaults, you can modify them via static class properties:
 
-```
+```php
 Backoff::$defaultMaxAttempts = 10;
 Backoff::$defaultStrategy = 'exponential';
 Backoff::$defaultJitterEnabled = true;
@@ -85,7 +85,7 @@ The default base time for all strategies is 100 milliseconds.
 
 ### Constant
 
-```
+```php
 $strategy = new ConstantStrategy(500);
 ```
 
@@ -93,7 +93,7 @@ This strategy will sleep for 500 milliseconds on each retry loop.
 
 ### Linear
 
-```
+```php
 $strategy = new LinearStrategy(200);
 ```
 
@@ -101,7 +101,7 @@ This strategy will sleep for `attempt * baseTime`, providing linear backoff star
 
 ### Polynomial
 
-```
+```php
 $strategy = new PolynomialStrategy(100, 3);
 ```
 
@@ -111,7 +111,7 @@ The default degree if none provided is 2, effectively quadratic time.
 
 ### Exponential
 
-```
+```php
 $strategy = new ExponentialStrategy(100);
 ```
 
@@ -121,7 +121,7 @@ This strategy will sleep for `(2^attempt) * baseTime`.
 
 In our earlier code examples we specified the strategy as a string:
 
-```
+```php
 backoff(function() {
     ...
 }, 10, 'constant');
@@ -135,7 +135,7 @@ This would use the `ConstantStrategy` with defaults, effectively giving you a 10
 
 You can create the strategy instance yourself in order to modify these defaults:
 
-```
+```php
 backoff(function() {
     ...
 }, 10, new LinearStrategy(500));
@@ -147,7 +147,7 @@ $backoff = new Backoff(10, new LinearStrategy(500));
 
 You can also pass in an integer as the strategy, will translates to a ConstantStrategy with the integer as the base time in milliseconds:
 
-```
+```php
 backoff(function() {
     ...
 }, 10, 1000);
@@ -159,7 +159,7 @@ $backoff = new Backoff(10, 1000);
 
 Finally, you can pass in a closure as the strategy if you wish. This closure should receive an integer `attempt` and return a sleep time in milliseconds.
 
-```
+```php
 backoff(function() {
     ...
 }, 10, function($attempt) {
