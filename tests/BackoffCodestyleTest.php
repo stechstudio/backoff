@@ -15,21 +15,14 @@
 
 declare(strict_types=1);
 
-namespace JBZoo\Retry\Strategies;
+namespace JBZoo\PHPUnit;
 
 /**
- * Class ConstantStrategy
- * @package JBZoo\Retry\Strategies
+ * Class BackoffCodestyleTest
+ *
+ * @package JBZoo\PHPUnit
  */
-class ConstantStrategy extends AbstractStrategy
+class BackoffCodestyleTest extends AbstractCodestyleTest
 {
-    /**
-     * @param int $attempt
-     * @return int
-     * @phan-suppress PhanUnusedPublicMethodParameter
-     */
-    public function getWaitTime(int $attempt): int
-    {
-        return $this->base;
-    }
+
 }

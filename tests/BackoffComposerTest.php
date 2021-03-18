@@ -15,21 +15,17 @@
 
 declare(strict_types=1);
 
-namespace JBZoo\Retry\Strategies;
+namespace JBZoo\PHPUnit;
 
 /**
- * Class ConstantStrategy
- * @package JBZoo\Retry\Strategies
+ * Class BackoffComposerTest
+ *
+ * @package JBZoo\PHPUnit
  */
-class ConstantStrategy extends AbstractStrategy
+class BackoffComposerTest extends AbstractComposerTest
 {
-    /**
-     * @param int $attempt
-     * @return int
-     * @phan-suppress PhanUnusedPublicMethodParameter
-     */
-    public function getWaitTime(int $attempt): int
+    public function testAuthor(): void
     {
-        return $this->base;
+        skip("It's fork");
     }
 }

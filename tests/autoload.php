@@ -15,21 +15,10 @@
 
 declare(strict_types=1);
 
-namespace JBZoo\Retry\Strategies;
-
-/**
- * Class ConstantStrategy
- * @package JBZoo\Retry\Strategies
- */
-class ConstantStrategy extends AbstractStrategy
-{
-    /**
-     * @param int $attempt
-     * @return int
-     * @phan-suppress PhanUnusedPublicMethodParameter
-     */
-    public function getWaitTime(int $attempt): int
-    {
-        return $this->base;
-    }
+// main autoload
+if ($autoload = realpath(__DIR__ . '/../vendor/autoload.php')) {
+    require_once $autoload;
+} else {
+    echo 'Please execute "composer update" !' . PHP_EOL;
+    exit(1);
 }

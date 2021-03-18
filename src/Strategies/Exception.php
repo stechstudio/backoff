@@ -18,18 +18,10 @@ declare(strict_types=1);
 namespace JBZoo\Retry\Strategies;
 
 /**
- * Class ConstantStrategy
+ * Class Exception
  * @package JBZoo\Retry\Strategies
  */
-class ConstantStrategy extends AbstractStrategy
+class Exception extends \JBZoo\Retry\Exception
 {
-    /**
-     * @param int $attempt
-     * @return int
-     * @phan-suppress PhanUnusedPublicMethodParameter
-     */
-    public function getWaitTime(int $attempt): int
-    {
-        return $this->base;
-    }
+
 }

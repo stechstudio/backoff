@@ -1,23 +1,56 @@
 {
-    "name": "stechstudio/backoff",
-    "description": "PHP library providing retry functionality with multiple backoff strategies and jitter support",
-    "license": "MIT",
-    "authors": [
+    "name"              : "jbzoo/retry",
+    "type"              : "library",
+    "description"       : "PHP library providing retry functionality with multiple backoff strategies and jitter support",
+    "license"           : "MIT",
+
+    "authors"           : [
         {
-            "name": "Joseph Szobody",
-            "email": "joseph@stechstudio.com"
+            "name"  : "Joseph Szobody",
+            "email" : "joseph@stechstudio.com",
+            "role"  : "lead"
+        },
+        {
+            "name"  : "Denis Smetannikov",
+            "email" : "admin@jbzoo.com"
         }
     ],
-    "require": {},
-    "require-dev": {
-        "phpunit/phpunit": "5.5.*"
+
+    "require"           : {
+        "php" : ">=7.2"
     },
-    "autoload": {
-        "psr-4":{
-            "STS\\Backoff\\": "src"
+
+    "require-dev"       : {
+        "jbzoo/toolbox-dev" : "^2.6.2"
+    },
+
+    "autoload"          : {
+        "psr-4" : {
+            "JBZoo\\Retry\\" : "src"
         },
-        "files": [
-            "src/helpers.php"
+        "files" : [
+            "src/defines.php",
+            "src/aliases.php"
         ]
+    },
+
+    "conflict"          : {
+        "stechstudio/backoff" : "*"
+    },
+
+    "autoload-dev"      : {
+        "classmap" : ["tests"]
+    },
+
+    "minimum-stability" : "dev",
+    "prefer-stable"     : true,
+    "config"            : {
+        "optimize-autoloader" : true
+    },
+
+    "extra"             : {
+        "branch-alias" : {
+            "dev-master" : "1.x-dev"
+        }
     }
 }

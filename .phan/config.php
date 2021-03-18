@@ -15,21 +15,15 @@
 
 declare(strict_types=1);
 
-namespace JBZoo\Retry\Strategies;
+$default = include __DIR__ . '/../vendor/jbzoo/codestyle/src/phan/default.php';
 
-/**
- * Class ConstantStrategy
- * @package JBZoo\Retry\Strategies
- */
-class ConstantStrategy extends AbstractStrategy
-{
-    /**
-     * @param int $attempt
-     * @return int
-     * @phan-suppress PhanUnusedPublicMethodParameter
-     */
-    public function getWaitTime(int $attempt): int
-    {
-        return $this->base;
-    }
-}
+$phanConfig = array_merge($default, [
+    'directory_list' => [
+        'src',
+    ]
+]);
+
+$phanConfig['plugins'][] = 'NotFullyQualifiedUsagePlugin';
+$phanConfig['plugins'][] = 'UnknownElementTypePlugin';
+
+return $phanConfig;

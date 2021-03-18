@@ -1,23 +1,44 @@
 <?php
-namespace STS\Backoff\Strategies;
 
+/**
+ * JBZoo Toolbox - Retry
+ *
+ * This file is part of the JBZoo Toolbox project.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @package    Retry
+ * @license    MIT
+ * @copyright  Copyright (C) JBZoo.com, All rights reserved.
+ * @link       https://github.com/JBZoo/Retry
+ */
+
+declare(strict_types=1);
+
+namespace JBZoo\PHPUnit;
+
+use JBZoo\Retry\Strategies\LinearStrategy;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class LinearStrategyTest
+ * @package JBZoo\PHPUnit
+ */
 class LinearStrategyTest extends TestCase
 {
     public function testDefaults()
     {
-        $s = new LinearStrategy();
+        $strategy = new LinearStrategy();
 
-        $this->assertEquals(100, $s->getBase());
+        isSame(100, $strategy->getBase());
     }
 
     public function testWaitTimes()
     {
-        $s = new LinearStrategy(100);
+        $strategy = new LinearStrategy(100);
 
-        $this->assertEquals(100, $s->getWaitTime(1));
-        $this->assertEquals(200, $s->getWaitTime(2));
-        $this->assertEquals(300, $s->getWaitTime(3));
+        isSame(100, $strategy->getWaitTime(1));
+        isSame(200, $strategy->getWaitTime(2));
+        isSame(300, $strategy->getWaitTime(3));
     }
 }

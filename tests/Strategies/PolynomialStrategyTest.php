@@ -1,29 +1,49 @@
 <?php
-namespace STS\Backoff\Strategies;
 
-use PHPUnit\Framework\TestCase;
+/**
+ * JBZoo Toolbox - Retry
+ *
+ * This file is part of the JBZoo Toolbox project.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @package    Retry
+ * @license    MIT
+ * @copyright  Copyright (C) JBZoo.com, All rights reserved.
+ * @link       https://github.com/JBZoo/Retry
+ */
 
-class PolynomialStrategyTest extends TestCase
+declare(strict_types=1);
+
+namespace JBZoo\PHPUnit;
+
+use JBZoo\Retry\Strategies\PolynomialStrategy;
+
+/**
+ * Class PolynomialStrategyTest
+ * @package JBZoo\PHPUnit
+ */
+class PolynomialStrategyTest extends PHPUnit
 {
     public function testDefaults()
     {
-        $s = new PolynomialStrategy();
+        $strategy = new PolynomialStrategy();
 
-        $this->assertEquals(100, $s->getBase());
-        $this->assertEquals(2, $s->getDegree());
+        isSame(100, $strategy->getBase());
+        isSame(2, $strategy->getDegree());
     }
 
     public function testWaitTimes()
     {
-        $s = new PolynomialStrategy(200, 2);
+        $strategy = new PolynomialStrategy(200, 2);
 
-        $this->assertEquals(200, $s->getWaitTime(1));
-        $this->assertEquals(800, $s->getWaitTime(2));
-        $this->assertEquals(1800, $s->getWaitTime(3));
-        $this->assertEquals(3200, $s->getWaitTime(4));
-        $this->assertEquals(5000, $s->getWaitTime(5));
-        $this->assertEquals(7200, $s->getWaitTime(6));
-        $this->assertEquals(9800, $s->getWaitTime(7));
-        $this->assertEquals(12800, $s->getWaitTime(8));
+        isSame(200, $strategy->getWaitTime(1));
+        isSame(800, $strategy->getWaitTime(2));
+        isSame(1800, $strategy->getWaitTime(3));
+        isSame(3200, $strategy->getWaitTime(4));
+        isSame(5000, $strategy->getWaitTime(5));
+        isSame(7200, $strategy->getWaitTime(6));
+        isSame(9800, $strategy->getWaitTime(7));
+        isSame(12800, $strategy->getWaitTime(8));
     }
 }

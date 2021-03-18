@@ -15,21 +15,17 @@
 
 declare(strict_types=1);
 
-namespace JBZoo\Retry\Strategies;
+namespace JBZoo\PHPUnit;
 
 /**
- * Class ConstantStrategy
- * @package JBZoo\Retry\Strategies
+ * Class BackoffReadmeTest
+ *
+ * @package JBZoo\PHPUnit
  */
-class ConstantStrategy extends AbstractStrategy
+class BackoffReadmeTest extends AbstractReadmeTest
 {
     /**
-     * @param int $attempt
-     * @return int
-     * @phan-suppress PhanUnusedPublicMethodParameter
+     * @var string
      */
-    public function getWaitTime(int $attempt): int
-    {
-        return $this->base;
-    }
+    protected $packageName = 'Retry';
 }

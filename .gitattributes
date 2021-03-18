@@ -11,10 +11,12 @@
 # @link       https://github.com/JBZoo/Retry
 #
 
-.idea
-.DS_Store
-build
-vendor
-phpunit.xml
-composer.lock
-*.cache
+* text eol=lf
+
+# (binary is a macro for -text -diff)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.ttf binary

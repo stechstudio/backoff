@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+    JBZoo Toolbox - Retry
+
+    This file is part of the JBZoo Toolbox project.
+    For the full copyright and license information, please view the LICENSE
+    file that was distributed with this source code.
+
+    @package    Retry
+    @license    MIT
+    @copyright  Copyright (C) JBZoo.com, All rights reserved.
+    @link       https://github.com/JBZoo/Retry
+-->
+<phpunit bootstrap="tests/autoload.php"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         convertDeprecationsToExceptions="true"
+         executionOrder="random"
+         processIsolation="false"
+         stopOnError="false"
+         stopOnFailure="false"
+         stopOnIncomplete="false"
+         stopOnSkipped="false"
+         stopOnRisky="false"
+>
+
+    <testsuites>
+        <testsuite name="All">
+            <directory suffix="Test.php">tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src</directory>
+        </whitelist>
+    </filter>
+
+    <logging>
+        <log type="coverage-html" target="build/coverage_html" lowUpperBound="75" highLowerBound="95"/>
+        <log type="coverage-clover" target="build/coverage_xml/main.xml"/>
+        <log type="coverage-php" target="build/coverage_cov/main.cov"/>
+        <log type="junit" target="build/coverage_junit/main.xml"/>
+        <log type="coverage-text" target="php://stdout" showUncoveredFiles="true" showOnlySummary="false"/>
+    </logging>
+
+</phpunit>
