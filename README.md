@@ -11,7 +11,7 @@
 
 
 Notes:
- * This is a fork. You can find the original project [here](https://github.com/stechstudio/retry).
+ * This is a fork. You can find the original project [here](https://github.com/stechstudio/backoff).
  * Now the codebase super strict, and it's covered with tests as much as possible. The original author is great, but the code was smelly :) It's sooo easy, and it took just one my evening... ;) 
  * I don't like wording "backoff" in the code. Yeah, it's fun but... I believe "retry" is more obvious. Sorry :)
  * There is nothing wrong to use import instead of global namespace for function.
