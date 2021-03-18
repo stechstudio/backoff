@@ -1,9 +1,12 @@
 {
     "name"              : "jbzoo/retry",
     "type"              : "library",
-    "description"       : "PHP library providing retry functionality with multiple backoff strategies and jitter support",
+    "description"       : "Tiny PHP library providing retry functionality with multiple backoff strategies and jitter support",
     "license"           : "MIT",
-    "keywords"          : ["jbzoo", "jitter", "retry", "backoff"],
+    "keywords"          : [
+        "jbzoo", "jitter", "retry", "backoff", "middleware",
+        "back-off", "retry-after", "failure", "restart", "retryable"
+    ],
 
     "authors"           : [
         {
@@ -34,10 +37,6 @@
             "src/defines.php",
             "src/aliases.php"
         ]
-    },
-
-    "conflict"          : {
-        "stechstudio/backoff" : "*"
     },
 
     "autoload-dev"      : {
