@@ -35,15 +35,15 @@ class ExponentialStrategyTest extends TestCase
 
     public function testWaitTimes()
     {
-        $s = new ExponentialStrategy(200);
+        $strategy = new ExponentialStrategy(200);
 
-        isSame(200, $s->getWaitTime(1));
-        isSame(800, $s->getWaitTime(2));
-        isSame(1600, $s->getWaitTime(3));
-        isSame(3200, $s->getWaitTime(4));
-        isSame(6400, $s->getWaitTime(5));
-        isSame(12800, $s->getWaitTime(6));
-        isSame(25600, $s->getWaitTime(7));
-        isSame(51200, $s->getWaitTime(8));
+        isSame(200, $strategy->getWaitTime(1));
+        isSame(800, $strategy->getWaitTime(2));
+        isSame(1600, $strategy->getWaitTime(3));
+        isSame(3200, $strategy->getWaitTime(4));
+        isSame(6400, $strategy->getWaitTime(5));
+        isSame(12800, $strategy->getWaitTime(6));
+        isSame(25600, $strategy->getWaitTime(7));
+        isSame(51200, $strategy->getWaitTime(8));
     }
 }

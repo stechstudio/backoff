@@ -18,11 +18,10 @@ declare(strict_types=1);
 namespace JBZoo\PHPUnit;
 
 /**
- * Class BackoffReadmeTest
- *
+ * Class RetryReadmeTest
  * @package JBZoo\PHPUnit
  */
-class BackoffReadmeTest extends AbstractReadmeTest
+class RetryReadmeTest extends AbstractReadmeTest
 {
     /**
      * @var string

@@ -18,11 +18,10 @@ declare(strict_types=1);
 namespace JBZoo\PHPUnit;
 
 /**
- * Class BackoffCopyrightTest
- *
+ * Class RetryCopyrightTest
  * @package JBZoo\PHPUnit
  */
-class BackoffCopyrightTest extends AbstractCopyrightTest
+class RetryCopyrightTest extends AbstractCopyrightTest
 {
     /**
      * @var string

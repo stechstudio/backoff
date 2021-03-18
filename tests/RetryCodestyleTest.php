@@ -18,14 +18,10 @@ declare(strict_types=1);
 namespace JBZoo\PHPUnit;
 
 /**
- * Class BackoffComposerTest
- *
+ * Class RetryCodestyleTest
  * @package JBZoo\PHPUnit
  */
-class BackoffComposerTest extends AbstractComposerTest
+class RetryCodestyleTest extends AbstractCodestyleTest
 {
-    public function testAuthor(): void
-    {
-        skip("It's fork");
-    }
+
 }
