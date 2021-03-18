@@ -3,6 +3,7 @@
     "type"              : "library",
     "description"       : "PHP library providing retry functionality with multiple backoff strategies and jitter support",
     "license"           : "MIT",
+    "keywords"          : ["jitter", "retry", "backoff"],
 
     "authors"           : [
         {
