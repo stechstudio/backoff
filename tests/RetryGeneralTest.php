@@ -19,6 +19,7 @@ namespace JBZoo\PHPUnit;
 
 use JBZoo\Retry\Retry;
 use JBZoo\Retry\Strategies\ConstantStrategy;
+use JBZoo\Retry\Strategies\ExponentialStrategy;
 use STS\Backoff\Backoff;
 
 use function JBZoo\Retry\retry;
@@ -112,6 +113,24 @@ class RetryGeneralTest extends PHPUnit
         });
 
         isSame(123, $result);
+    }
+
+    public function testJitter()
+    {
+        $retry = new Retry();
+        $retry->setStrategy(new ExponentialStrategy(10));
+        $retry->setWaitCap(1000000);
+
+        isFalse($retry->jitterEnabled());
+        isSame($retry->getWaitTime(3), $retry->getWaitTime(3));
+
+        $retry->enableJitter();
+        isTrue($retry->jitterEnabled());
+        isNotSame($retry->getWaitTime(3), $retry->getWaitTime(3));
+
+        $retry->disableJitter();
+        isFalse($retry->jitterEnabled());
+        isSame($retry->getWaitTime(3), $retry->getWaitTime(3));
     }
 
     public function testFunctionAlias()

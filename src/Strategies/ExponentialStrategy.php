@@ -30,6 +30,7 @@ class ExponentialStrategy extends AbstractStrategy
      */
     public function getWaitTime(int $attempt): int
     {
-        return $attempt === 1 ? $this->base : (2 ** $attempt) * $this->base;
+        $value = $attempt === 1 ? $this->base : (2 ** $attempt) * $this->base;
+        return (int)$value;
     }
 }

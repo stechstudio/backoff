@@ -48,7 +48,8 @@ class PolynomialStrategy extends AbstractStrategy
      */
     public function getWaitTime(int $attempt): int
     {
-        return ($attempt ** $this->degree) * $this->base;
+        $value = ($attempt ** $this->degree) * $this->base;
+        return (int)$value;
     }
 
     /**
