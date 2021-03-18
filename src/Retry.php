@@ -62,7 +62,7 @@ class Retry
      *
      * @var int In milliseconds
      */
-    protected $waitCap = 0;
+    protected $waitCap = self::DEFAULT_WAIT_CAP;
 
     /**
      * @var bool
@@ -159,7 +159,6 @@ class Retry
     public function enableJitter(): self
     {
         $this->setJitter(true);
-
         return $this;
     }
 
@@ -214,10 +213,6 @@ class Retry
 
         if (\is_callable($strategy)) {
             return $strategy;
-        }
-
-        if (\is_int($strategy)) {
-            return new ConstantStrategy($strategy);
         }
 
         throw new \InvalidArgumentException("Invalid strategy: {$strategy}");
@@ -321,7 +316,6 @@ class Retry
 
     /**
      * @param int $attempt
-     *
      * @return int
      */
     public function getWaitTime(int $attempt): int
@@ -341,7 +335,6 @@ class Retry
 
     /**
      * @param int $waitTime
-     *
      * @return int
      */
     protected function jitter(int $waitTime): int

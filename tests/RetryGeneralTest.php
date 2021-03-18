@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace JBZoo\PHPUnit;
 
+use JBZoo\Retry\Retry;
 use JBZoo\Retry\Strategies\ConstantStrategy;
 use STS\Backoff\Backoff;
 
@@ -101,6 +102,11 @@ class RetryGeneralTest extends PHPUnit
     {
         $backoff = new Backoff();
 
+        $backoff->enableJitter();
+        isTrue($backoff->jitterEnabled());
+        $backoff->disableJitter();
+        isFalse($backoff->jitterEnabled());
+
         $result = $backoff->run(function () {
             return 123;
         });
@@ -115,5 +121,38 @@ class RetryGeneralTest extends PHPUnit
         });
 
         isSame("success", $result);
+    }
+
+    public function testUndefinedStrategy()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("Invalid strategy: UndefinedStrategy");
+
+        $backoff = new Backoff();
+        $backoff->setStrategy('UndefinedStrategy');
+    }
+
+    public function testErrorHandler()
+    {
+        $messages = [];
+
+        $retry = new Retry();
+        $retry->setErrorHandler(function ($exception, $attempt, $maxAttempts) use (&$messages) {
+            $messages[] = "On run {$attempt}/{$maxAttempts} we hit a problem: {$exception->getMessage()}";
+        });
+
+        try {
+            $retry->run(function () {
+                throw new \Error("failure");
+            });
+        } catch (\Exception $exception) {
+        }
+
+        isSame([
+            'On run 1/5 we hit a problem: failure',
+            'On run 2/5 we hit a problem: failure',
+            'On run 3/5 we hit a problem: failure',
+            'On run 4/5 we hit a problem: failure'
+        ], $messages);
     }
 }

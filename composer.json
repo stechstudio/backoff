@@ -22,7 +22,8 @@
     },
 
     "require-dev"       : {
-        "jbzoo/toolbox-dev" : "^2.6.2"
+        "jbzoo/toolbox-dev" : "^2.6.2",
+        "jbzoo/jbdump"      : ">=1.5.4"
     },
 
     "autoload"          : {
