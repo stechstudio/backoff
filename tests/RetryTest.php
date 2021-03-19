@@ -23,8 +23,6 @@ use JBZoo\Retry\Strategies\ExponentialStrategy;
 use JBZoo\Retry\Strategies\LinearStrategy;
 use JBZoo\Retry\Strategies\PolynomialStrategy;
 
-use function JBZoo\Utils\float;
-
 /**
  * Class RetryTest
  * @package JBZoo\PHPUnit
