@@ -14,8 +14,10 @@ Notes:
  * This is a fork. You can find the original project [here](https://github.com/stechstudio/backoff).
  * Now the codebase super strict, and it's covered with tests as much as possible. The original author is great, but the code was smelly :) It's sooo easy, and it took just one my evening... ;) 
  * I don't like wording "backoff" in the code. Yeah, it's fun but... I believe "retry" is more obvious. Sorry :)
- * There is nothing wrong to use import instead of global namespace for function.
- * At least my project has [aliases](./src/aliases.php) for backward compatibility with the original. ;)
+ * There is nothing wrong to use import instead of global namespace for function. Don't use old-school practices.
+ * Static variables with default values are deprecated and disabled. See dump of thoughts below.
+ * New methods `setJitterPercent|getJitterPercent`, `setJitterMinCap|getJitterMinCap` to have fine-tuning.
+ * My project has [aliases](./src/aliases.php) for backward compatibility with the original. ;)
 
 
 ## Installation
@@ -231,7 +233,7 @@ You can enable jitter by passing `true` in as the fifth argument to the `retry` 
 
 By default, we use the "FullJitter" approach outlined in the above article, where a random number between 0 and the sleep time provided by your selected strategy is used.
 
-But you can change the maximum time for Jitter with method `setJitterPercent(). By default it's 100.
+But you can change the maximum time for Jitter with method `setJitterPercent(). It's 100 by default. Also you can set min value for jitter with `setJitterMinCap` (it's `0` by default).
 
 ## Custom retry decider
 
@@ -259,7 +261,7 @@ use JBZoo\Retry\Retry;
 
 $retry = new Retry();
 $retry->setErrorHandler(function($exception, $attempt, $maxAttempts) {
-    Log::error("On run $attempt we hit a problem: " . $exception->getMessage());
+    Log::error("On run {$attempt}/{$maxAttempts} we hit a problem: {$exception->getMessage()}");
 });
 ```
 
