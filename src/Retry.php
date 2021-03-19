@@ -130,7 +130,9 @@ class Retry
     }
 
     /**
-     * @param int|null $waitCap
+     * Set max time period between retries
+     *
+     * @param int|null $waitCap Time in milliseconds
      * @return $this
      */
     public function setWaitCap(?int $waitCap): self
