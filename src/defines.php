@@ -21,7 +21,7 @@ namespace JBZoo\Retry;
  * @param \Closure $callback
  * @param int      $maxAttempts
  * @param mixed    $strategy
- * @param int      $waitCap
+ * @param int|null $waitCap
  * @param bool     $useJitter
  * @return mixed|null
  * @throws \Exception
@@ -30,7 +30,7 @@ function retry(
     \Closure $callback,
     int $maxAttempts = Retry::DEFAULT_MAX_ATTEMPTS,
     $strategy = Retry::DEFAULT_STRATEGY,
-    int $waitCap = Retry::DEFAULT_WAIT_CAP,
+    ?int $waitCap = null,
     bool $useJitter = Retry::DEFAULT_JITTER_STATE
 ) {
     return (new Retry($maxAttempts, $strategy, $waitCap, $useJitter))->run($callback);

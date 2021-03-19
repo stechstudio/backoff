@@ -31,9 +31,14 @@ use JBZoo\Retry\Strategies\PolynomialStrategy;
 class Retry
 {
     public const DEFAULT_MAX_ATTEMPTS = 5;
-    public const DEFAULT_STRATEGY     = 'polynomial';
+    public const DEFAULT_STRATEGY     = self::STRATEGY_POLYNOMIAL;
     public const DEFAULT_JITTER_STATE = false;
-    public const DEFAULT_WAIT_CAP     = 2;
+
+    // Pre-defined strategies
+    public const STRATEGY_CONSTANT    = 'constant';
+    public const STRATEGY_LINEAR      = 'linear';
+    public const STRATEGY_POLYNOMIAL  = 'polynomial';
+    public const STRATEGY_EXPONENTIAL = 'exponential';
 
     /**
      * This callable should take an 'attempt' integer, and return a wait time in milliseconds
@@ -46,10 +51,10 @@ class Retry
      * @var array
      */
     protected $strategies = [
-        'constant'    => ConstantStrategy::class,
-        'linear'      => LinearStrategy::class,
-        'polynomial'  => PolynomialStrategy::class,
-        'exponential' => ExponentialStrategy::class
+        self::STRATEGY_CONSTANT    => ConstantStrategy::class,
+        self::STRATEGY_LINEAR      => LinearStrategy::class,
+        self::STRATEGY_POLYNOMIAL  => PolynomialStrategy::class,
+        self::STRATEGY_EXPONENTIAL => ExponentialStrategy::class
     ];
 
     /**
@@ -59,10 +64,9 @@ class Retry
 
     /**
      * The max wait time you want to allow, regardless of what the strategy says
-     *
-     * @var int In milliseconds
+     * @var int|null In milliseconds
      */
-    protected $waitCap = self::DEFAULT_WAIT_CAP;
+    protected $waitCap;
 
     /**
      * @var bool
@@ -87,20 +91,20 @@ class Retry
     protected $errorHandler;
 
     /**
-     * @param int      $maxAttempts
-     * @param mixed    $strategy
-     * @param int      $waitCap
-     * @param bool     $useJitter
-     * @param callable $decider
+     * @param int           $maxAttempts
+     * @param mixed         $strategy
+     * @param int|null      $waitCap
+     * @param bool|null     $useJitter
+     * @param callable|null $decider
      */
     public function __construct(
-        $maxAttempts = self::DEFAULT_MAX_ATTEMPTS,
+        int $maxAttempts = self::DEFAULT_MAX_ATTEMPTS,
         $strategy = self::DEFAULT_STRATEGY,
-        $waitCap = self::DEFAULT_WAIT_CAP,
-        $useJitter = self::DEFAULT_JITTER_STATE,
-        $decider = null
+        ?int $waitCap = null,
+        ?bool $useJitter = self::DEFAULT_JITTER_STATE,
+        ?callable $decider = null
     ) {
-        $this->setMaxAttempts($maxAttempts ?? self::DEFAULT_MAX_ATTEMPTS);
+        $this->setMaxAttempts($maxAttempts ?: self::DEFAULT_MAX_ATTEMPTS);
         $this->setStrategy($strategy ?? self::DEFAULT_STRATEGY);
         $this->setJitter($useJitter ?? self::DEFAULT_JITTER_STATE);
         $this->setWaitCap($waitCap);
@@ -126,19 +130,19 @@ class Retry
     }
 
     /**
-     * @param int $waitCap
+     * @param int|null $waitCap
      * @return $this
      */
-    public function setWaitCap(int $waitCap): self
+    public function setWaitCap(?int $waitCap): self
     {
         $this->waitCap = $waitCap;
         return $this;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getWaitCap(): int
+    public function getWaitCap(): ?int
     {
         return $this->waitCap;
     }
@@ -188,7 +192,7 @@ class Retry
     }
 
     /**
-     * @param callable|string $strategy
+     * @param callable|string|int $strategy
      * @return $this
      */
     public function setStrategy($strategy): self
@@ -215,6 +219,10 @@ class Retry
             return $strategy;
         }
 
+        if (\is_int($strategy)) {
+            return new ConstantStrategy($strategy);
+        }
+
         throw new \InvalidArgumentException("Invalid strategy: {$strategy}");
     }
 
@@ -234,7 +242,7 @@ class Retry
 
             $this->wait($attempt);
             try {
-                $result = $callback();
+                $result = $callback($attempt + 1, $this->getMaxAttempts(), $this);
             } catch (\Exception $exception) {
                 $this->exceptions[] = $exception;
                 $exceptionExternal = $exception;
@@ -286,17 +294,17 @@ class Retry
     protected static function getDefaultDecider(): Closure
     {
         return static function (
-            int $retry,
+            int $currentAttempt,
             int $maxAttempts,
             // @phan-suppress-next-line PhanUnusedClosureParameter
             $result = null,
             ?Exception $exception = null
         ): bool {
-            if ($retry >= $maxAttempts && $exception) {
+            if ($currentAttempt >= $maxAttempts && $exception) {
                 throw  $exception;
             }
 
-            return $retry < $maxAttempts && $exception;
+            return $currentAttempt < $maxAttempts && $exception;
         };
     }
 
@@ -306,17 +314,37 @@ class Retry
      */
     public function wait(int $attempt): self
     {
-        if ($attempt === 0) {
+        if ($attempt <= 0) {
             return $this;
         }
 
-        \usleep($this->getWaitTime($attempt) * 1000);
+        // It's PHP usleep limitation
+        $maxTimeForUSleep = 10 ** 6;
+
+        // Helper vars. No magic numbers!
+        $divider1k = 1000;
+        $divider1kk = $divider1k * $divider1k;
+
+        $microSeconds = $this->getWaitTime($attempt) * $divider1k;
+
+        // It solves cross-platform issue. Check, if it's more than 1 sec.
+        // See notes https://www.php.net/manual/en/function.usleep.php
+        if ($microSeconds >= $maxTimeForUSleep) {
+            $seconds = $microSeconds / $divider1kk;
+            $partInMcSeconds = \fmod($seconds, 1) * $divider1kk;
+
+            \sleep((int)$seconds); // It works with seconds
+            \usleep((int)$partInMcSeconds); //  It works with microseconds (1/1000000)
+        } else {
+            \usleep($microSeconds);
+        }
+
         return $this;
     }
 
     /**
      * @param int $attempt
-     * @return int
+     * @return int time in milliseconds   . ,,,,,,,,,,,,,,,,,,,,
      */
     public function getWaitTime(int $attempt): int
     {
@@ -330,7 +358,7 @@ class Retry
      */
     protected function cap(int $waitTime): int
     {
-        return \min($this->getWaitCap(), $waitTime);
+        return $this->getWaitCap() > 0 ? \min($this->getWaitCap(), $waitTime) : $waitTime;
     }
 
     /**

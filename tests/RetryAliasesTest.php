@@ -28,7 +28,7 @@ use function JBZoo\Retry\retry;
  * Class RetryGeneralTest
  * @package JBZoo\PHPUnit
  */
-class RetryGeneralTest extends PHPUnit
+class RetryAliasesTest extends PHPUnit
 {
     public function testSuccessWithDefaults()
     {
@@ -72,7 +72,10 @@ class RetryGeneralTest extends PHPUnit
         $elapsedMS = ($end - $start) * 1000;
 
         // We expect that this took just a bit over the 100ms that we slept
-        isTrue($elapsedMS > 100 && $elapsedMS < 200);
+        isTrue(
+            $elapsedMS > 100 && $elapsedMS < 200,
+            "Expected elapsedMS between 100 & 200, got: {$elapsedMS}"
+        );
     }
 
     public function testWaitCap()
@@ -84,8 +87,8 @@ class RetryGeneralTest extends PHPUnit
         try {
             retry(function () {
                 throw new \RuntimeException("failure");
-            }, 2, new ConstantStrategy(100000), 100);
-        } catch (\Exception $e) {
+            }, 2, new ConstantStrategy(1000), 100);
+        } catch (\Exception $exception) {
         }
 
         $end = microtime(true);
@@ -95,7 +98,7 @@ class RetryGeneralTest extends PHPUnit
         // We expect that this took just a bit over the 100ms that we slept
         isTrue(
             $elapsedMS > 90 && $elapsedMS < 150,
-            sprintf("Expected elapsedMS between 90 & 200, got: $elapsedMS\n")
+            "Expected elapsedMS between 90 & 150, got: {$elapsedMS}"
         );
     }
 
@@ -119,7 +122,7 @@ class RetryGeneralTest extends PHPUnit
     {
         $retry = new Retry();
         $retry->setStrategy(new ExponentialStrategy(10));
-        $retry->setWaitCap(1000000);
+        $retry->setWaitCap(1000);
 
         isFalse($retry->jitterEnabled());
         isSame($retry->getWaitTime(3), $retry->getWaitTime(3));
@@ -140,38 +143,5 @@ class RetryGeneralTest extends PHPUnit
         });
 
         isSame("success", $result);
-    }
-
-    public function testUndefinedStrategy()
-    {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("Invalid strategy: UndefinedStrategy");
-
-        $backoff = new Backoff();
-        $backoff->setStrategy('UndefinedStrategy');
-    }
-
-    public function testErrorHandler()
-    {
-        $messages = [];
-
-        $retry = new Retry();
-        $retry->setErrorHandler(function ($exception, $attempt, $maxAttempts) use (&$messages) {
-            $messages[] = "On run {$attempt}/{$maxAttempts} we hit a problem: {$exception->getMessage()}";
-        });
-
-        try {
-            $retry->run(function () {
-                throw new \Error("failure");
-            });
-        } catch (\Exception $exception) {
-        }
-
-        isSame([
-            'On run 1/5 we hit a problem: failure',
-            'On run 2/5 we hit a problem: failure',
-            'On run 3/5 we hit a problem: failure',
-            'On run 4/5 we hit a problem: failure'
-        ], $messages);
     }
 }
