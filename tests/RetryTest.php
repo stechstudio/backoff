@@ -166,9 +166,6 @@ class RetryTest extends PHPUnit
         );
     }
 
-    /**
-     * @depends testWaitLessOneSecond
-     */
     public function testWaitMoreOneSecond()
     {
         $retry = new Retry(1, new LinearStrategy(400));

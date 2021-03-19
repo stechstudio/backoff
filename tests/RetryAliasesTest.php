@@ -25,7 +25,7 @@ use STS\Backoff\Backoff;
 use function JBZoo\Retry\retry;
 
 /**
- * Class RetryGeneralTest
+ * Class RetryAliasesTest
  * @package JBZoo\PHPUnit
  */
 class RetryAliasesTest extends PHPUnit
