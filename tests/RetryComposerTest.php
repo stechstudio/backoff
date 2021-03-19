@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace JBZoo\PHPUnit;
 
+use function JBZoo\Data\json;
+
 /**
  * Class RetryComposerTest
  * @package JBZoo\PHPUnit
@@ -25,6 +27,15 @@ class RetryComposerTest extends AbstractComposerTest
 {
     public function testAuthor(): void
     {
-        skip("It's fork");
+        $composerPath = PROJECT_ROOT . '/composer.json';
+        $composerJson = json($composerPath);
+
+        if ($this->authorName) {
+            isSame($this->authorName, $composerJson->find('authors.1.name'), "See file: {$composerPath}");
+        }
+
+        if ($this->authorEmail) {
+            isSame($this->authorEmail, $composerJson->find('authors.1.email'), "See file: {$composerPath}");
+        }
     }
 }

@@ -30,9 +30,11 @@ use JBZoo\Retry\Strategies\PolynomialStrategy;
  */
 class Retry
 {
-    public const DEFAULT_MAX_ATTEMPTS = 5;
-    public const DEFAULT_STRATEGY     = self::STRATEGY_POLYNOMIAL;
-    public const DEFAULT_JITTER_STATE = false;
+    // Fallback values and global defaults
+    public const DEFAULT_MAX_ATTEMPTS   = 5;
+    public const DEFAULT_STRATEGY       = self::STRATEGY_POLYNOMIAL;
+    public const DEFAULT_JITTER_STATE   = false;
+    public const DEFAULT_JITTER_PERCENT = 100;
 
     // Pre-defined strategies
     public const STRATEGY_CONSTANT    = 'constant';
@@ -41,8 +43,25 @@ class Retry
     public const STRATEGY_EXPONENTIAL = 'exponential';
 
     /**
+     * @var int
+     * @deprecated See README.md "Changing defaults"
+     */
+    public static $defaultMaxAttempts = self::DEFAULT_MAX_ATTEMPTS;
+
+    /**
+     * @var string
+     * @deprecated See README.md "Changing defaults"
+     */
+    public static $defaultStrategy = self::DEFAULT_STRATEGY;
+
+    /**
+     * @var bool
+     * @deprecated See README.md "Changing defaults"
+     */
+    public static $defaultJitterEnabled = self::DEFAULT_JITTER_STATE;
+
+    /**
      * This callable should take an 'attempt' integer, and return a wait time in milliseconds
-     *
      * @var callable
      */
     protected $strategy;
@@ -72,6 +91,16 @@ class Retry
      * @var bool
      */
     protected $useJitter = false;
+
+    /**
+     * @var int
+     */
+    protected $jitterPercent = self::DEFAULT_JITTER_PERCENT;
+
+    /**
+     * @var int
+     */
+    protected $jitterMinTime = 0;
 
     /**
      * @var array|non-empty-array<int,\Exception>|non-empty-array<int,\Throwable>
@@ -104,20 +133,20 @@ class Retry
         ?bool $useJitter = self::DEFAULT_JITTER_STATE,
         ?callable $decider = null
     ) {
-        $this->setMaxAttempts($maxAttempts ?: self::DEFAULT_MAX_ATTEMPTS);
-        $this->setStrategy($strategy ?? self::DEFAULT_STRATEGY);
+        $this->setMaxAttempts($maxAttempts);
+        $this->setStrategy($strategy ?: self::DEFAULT_STRATEGY);
         $this->setJitter($useJitter ?? self::DEFAULT_JITTER_STATE);
         $this->setWaitCap($waitCap);
         $this->setDecider($decider ?? self::getDefaultDecider());
     }
 
     /**
-     * @param int $attempts
+     * @param int $maxAttempts
      * @return $this
      */
-    public function setMaxAttempts(int $attempts): self
+    public function setMaxAttempts(int $maxAttempts): self
     {
-        $this->maxAttempts = $attempts;
+        $this->maxAttempts = $maxAttempts > 0 ? $maxAttempts : self::DEFAULT_MAX_ATTEMPTS;
         return $this;
     }
 
@@ -157,6 +186,43 @@ class Retry
     {
         $this->useJitter = $useJitter;
         return $this;
+    }
+
+    /**
+     * @param int $jitterPercent
+     * @return $this
+     */
+    public function setJitterPercent(int $jitterPercent): self
+    {
+        $this->jitterPercent = $jitterPercent;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getJitterPercent(): int
+    {
+        return $this->jitterPercent;
+    }
+
+
+    /**
+     * @param int $jitterMinTime
+     * @return $this
+     */
+    public function setJitterMinCap(int $jitterMinTime): self
+    {
+        $this->jitterMinTime = $jitterMinTime < 0 ? 0 : $jitterMinTime;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getJitterMinCap(): int
+    {
+        return $this->jitterMinTime;
     }
 
     /**
@@ -369,6 +435,17 @@ class Retry
      */
     protected function jitter(int $waitTime): int
     {
-        return $this->jitterEnabled() ? \random_int(0, $waitTime) : $waitTime;
+        if ($this->jitterEnabled()) {
+            $minValue = $this->jitterMinTime;
+            $maxValue = (int)($waitTime * $this->jitterPercent / 100);
+
+            if ($minValue > $maxValue) {
+                $minValue = $maxValue;
+            }
+
+            return \random_int($minValue, $maxValue);
+        }
+
+        return $waitTime;
     }
 }

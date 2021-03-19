@@ -76,7 +76,27 @@ $result = (new Retry())
     });
 ```
 
-You might want to do this somewhere in your application bootstrap for example. These defaults will be used anytime you create an instance of the Retry class or use the `retry()` helper function.
+## Changing defaults
+
+**Important Note:** It's a fork. So I left it here just for backward compatibility. Static variables are deprecated and don't work at all!
+
+This is terrible practice! Explicit is better than implicit. ;)
+
+ * Example #1. Different parts of your project can have completely different settings.
+ * Example #2. Imagine what would happen if some third3-party library (in `./vendor`) uses its own default settings. Let's fight!
+ * Example #3. It's just an attempt to store variables in a global namespace. Do you see it?
+
+
+So the next variables are deprecated, and they don't influence anything.
+```php
+use JBZoo\Retry\Retry;
+
+Retry::$defaultMaxAttempts;
+Retry::$defaultStrategy;
+Retry::$defaultJitterEnabled;
+```
+
+Just use dependencies injection or so and don't warm your head.
 
 ## Strategies
 
@@ -205,11 +225,13 @@ If you have a lot of clients starting a job at the same time and encountering fa
 
 The solution for this is to add randomness. See here for a good explanation:
 
-https://www.awsarchitectureblog.com/2015/03/retry.html
+https://aws.amazon.com/ru/blogs/architecture/exponential-backoff-and-jitter
 
 You can enable jitter by passing `true` in as the fifth argument to the `retry` helper function, or by using the `enableJitter()` method on the Retry class.
 
-We use the "FullJitter" approach outlined in the above article, where a random number between 0 and the sleep time provided by your selected strategy is used.
+By default, we use the "FullJitter" approach outlined in the above article, where a random number between 0 and the sleep time provided by your selected strategy is used.
+
+But you can change the maximum time for Jitter with method `setJitterPercent(). By default it's 100.
 
 ## Custom retry decider
 

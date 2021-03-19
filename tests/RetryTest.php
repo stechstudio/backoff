@@ -36,6 +36,9 @@ class RetryTest extends PHPUnit
         isSame(5, $retry->getMaxAttempts());
         self::assertInstanceOf(PolynomialStrategy::class, $retry->getStrategy());
         isFalse($retry->jitterEnabled());
+
+        $retry->setMaxAttempts(0);
+        isSame(5, $retry->getMaxAttempts());
     }
 
     public function testFluidApi()
@@ -54,12 +57,36 @@ class RetryTest extends PHPUnit
         self::assertInstanceOf(ConstantStrategy::class, $retry->getStrategy());
     }
 
+    public function testNotChangingStaticDefaults()
+    {
+        Retry::$defaultMaxAttempts = 15;
+        Retry::$defaultStrategy = "constant";
+        Retry::$defaultJitterEnabled = true;
+
+        $retry = new Retry();
+
+        isSame(Retry::DEFAULT_MAX_ATTEMPTS, $retry->getMaxAttempts());
+        self::assertInstanceOf(PolynomialStrategy::class, $retry->getStrategy());
+        isSame(Retry::DEFAULT_JITTER_STATE, $retry->jitterEnabled());
+
+        Retry::$defaultStrategy = new LinearStrategy(250);
+
+        $retry = new Retry();
+
+        self::assertInstanceOf(PolynomialStrategy::class, $retry->getStrategy());
+
+        // I don't care about put them back. They dont' work at all and deprecated.
+        // Retry::$defaultMaxAttempts = 5;
+        // Retry::$defaultStrategy = "polynomial";
+        // Retry::$defaultJitterEnabled = false;
+    }
+
     public function testConstructorParams()
     {
-        $b = new Retry(10, "linear");
+        $retry = new Retry(10, "linear");
 
-        isSame(10, $b->getMaxAttempts());
-        self::assertInstanceOf(LinearStrategy::class, $b->getStrategy());
+        isSame(10, $retry->getMaxAttempts());
+        self::assertInstanceOf(LinearStrategy::class, $retry->getStrategy());
     }
 
     public function testStrategyKeys()
@@ -67,15 +94,19 @@ class RetryTest extends PHPUnit
         $retry = new Retry();
 
         $retry->setStrategy("constant");
+        $retry->setStrategy(Retry::STRATEGY_CONSTANT);
         self::assertInstanceOf(ConstantStrategy::class, $retry->getStrategy());
 
         $retry->setStrategy("linear");
+        $retry->setStrategy(Retry::STRATEGY_LINEAR);
         self::assertInstanceOf(LinearStrategy::class, $retry->getStrategy());
 
         $retry->setStrategy("polynomial");
+        $retry->setStrategy(Retry::STRATEGY_POLYNOMIAL);
         self::assertInstanceOf(PolynomialStrategy::class, $retry->getStrategy());
 
         $retry->setStrategy("exponential");
+        $retry->setStrategy(Retry::STRATEGY_EXPONENTIAL);
         self::assertInstanceOf(ExponentialStrategy::class, $retry->getStrategy());
     }
 
@@ -392,5 +423,43 @@ class RetryTest extends PHPUnit
             $retry->getWaitTime(4),
             $retry->getWaitTime(5)
         ]);
+    }
+
+    public function testJitterPercent()
+    {
+        $originalPeriod = 100;
+        $retry = (new Retry(1, $originalPeriod))->enableJitter();
+
+        // Check default
+        isSame(100, $retry->getJitterPercent());
+        isSame(0, $retry->getJitterMinCap());
+
+
+        // Check min jitter period
+        $retry->setJitterMinCap(-1);
+        isSame(0, $retry->getJitterMinCap());
+        $retry->setJitterMinCap(1);
+        isSame(1, $retry->getJitterMinCap());
+        $retry->setJitterMinCap(1000000);
+        isSame(100, $retry->getWaitTime(1));
+
+
+        // If jitter = 1%
+        $retry->setJitterPercent(1);
+        $retry->setJitterMinCap(1);
+        isSame(1, $retry->getJitterPercent());
+        isSame(1, $retry->getWaitTime(1));
+
+
+        // If jitter = 1,000,000%
+        $retry->setJitterPercent(1000000);
+        isSame(1000000, $retry->getJitterPercent());
+        isTrue($retry->getWaitTime(1) > $originalPeriod);
+
+
+        // Revert to default
+        $retry->setJitterPercent(Retry::DEFAULT_JITTER_PERCENT);
+        isSame(100, $retry->getJitterPercent());
+        isTrue($retry->getWaitTime(1) <= $originalPeriod);
     }
 }
