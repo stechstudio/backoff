@@ -27,4 +27,16 @@ class RetryReadmeTest extends AbstractReadmeTest
      * @var string
      */
     protected $packageName = 'Retry';
+
+    /**
+     * @inheritDoc
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->params['scrutinizer'] = true;
+        $this->params['codefactor'] = true;
+        $this->params['strict_types'] = true;
+    }
 }
