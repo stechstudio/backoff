@@ -115,7 +115,7 @@ class Retry
 
     /**
      * This receive any exceptions we encounter.
-     * @var callable
+     * @var callable|null
      */
     protected $errorHandler;
 
@@ -358,6 +358,7 @@ class Retry
      * Gets a default decider that simply check exceptions and maxattempts
      * @return Closure
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @psalm-suppress MissingClosureParamType
      */
     protected static function getDefaultDecider(): Closure
     {
@@ -426,7 +427,8 @@ class Retry
      */
     protected function cap(int $waitTime): int
     {
-        return $this->getWaitCap() > 0 ? \min($this->getWaitCap(), $waitTime) : $waitTime;
+        $waitCap = (int)$this->getWaitCap();
+        return $waitCap > 0 ? \min($waitCap, $waitTime) : $waitTime;
     }
 
     /**

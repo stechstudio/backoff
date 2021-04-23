@@ -25,7 +25,7 @@
     },
 
     "require-dev"       : {
-        "jbzoo/toolbox-dev" : "^2.10.0",
+        "jbzoo/toolbox-dev" : "^2.11.0",
         "jbzoo/jbdump"      : ">=1.5.6"
     },
 

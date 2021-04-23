@@ -192,8 +192,8 @@ class RetryTest extends PHPUnit
 
         // We expect that this took just barely over the 100ms we asked for
         isTrue(
-            $elapsedMS > 90 && $elapsedMS < 150,
-            "Expected elapsedMS between 90 & 150, got: {$elapsedMS}"
+            $elapsedMS > 90 && $elapsedMS < 175,
+            "Expected elapsedMS between 90 & 175, got: {$elapsedMS}"
         );
     }
 
@@ -211,8 +211,8 @@ class RetryTest extends PHPUnit
 
         // We expect that this took just barely over the 100ms we asked for
         isTrue(
-            $elapsedMS > 1200 && $elapsedMS < 1300,
-            "Expected elapsedMS between 90 & 150, got: {$elapsedMS}"
+            $elapsedMS > 1200 && $elapsedMS < 1400,
+            "Expected elapsedMS between 1200 & 1400, got: {$elapsedMS}"
         );
     }
 
