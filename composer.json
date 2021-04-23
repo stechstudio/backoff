@@ -1,14 +1,14 @@
 {
-    "name"              : "jbzoo/retry",
-    "type"              : "library",
-    "description"       : "Tiny PHP library providing retry functionality with multiple backoff strategies and jitter support",
-    "license"           : "MIT",
-    "keywords"          : [
+    "name"         : "jbzoo/retry",
+    "type"         : "library",
+    "description"  : "Tiny PHP library providing retry functionality with multiple backoff strategies and jitter support",
+    "license"      : "MIT",
+    "keywords"     : [
         "jbzoo", "jitter", "retry", "backoff", "middleware",
         "back-off", "retry-after", "failure", "restart", "retryable"
     ],
 
-    "authors"           : [
+    "authors"      : [
         {
             "name"  : "Joseph Szobody",
             "email" : "joseph@stechstudio.com",
@@ -20,16 +20,20 @@
         }
     ],
 
-    "require"           : {
+    "require"      : {
         "php" : ">=7.2"
     },
 
-    "require-dev"       : {
-        "jbzoo/toolbox-dev" : "^2.10.0",
+    "require-dev"  : {
+        "jbzoo/toolbox-dev" : "^2.11.0",
         "jbzoo/jbdump"      : ">=1.5.6"
     },
 
-    "autoload"          : {
+    "replace"      : {
+        "stechstudio/backoff" : "*"
+    },
+
+    "autoload"     : {
         "psr-4" : {
             "JBZoo\\Retry\\" : "src"
         },
@@ -39,17 +43,15 @@
         ]
     },
 
-    "autoload-dev"      : {
+    "autoload-dev" : {
         "classmap" : ["tests"]
     },
 
-    "minimum-stability" : "dev",
-    "prefer-stable"     : true,
-    "config"            : {
+    "config"       : {
         "optimize-autoloader" : true
     },
 
-    "extra"             : {
+    "extra"        : {
         "branch-alias" : {
             "dev-master" : "2.x-dev"
         }
