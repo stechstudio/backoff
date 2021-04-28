@@ -15,15 +15,15 @@
 
 declare(strict_types=1);
 
-$default = include __DIR__ . '/../vendor/jbzoo/codestyle/src/phan/default.php';
+$default = include __DIR__ . '/vendor/jbzoo/codestyle/src/phan/default.php';
 
-$phanConfig = array_merge($default, [
+$config = array_merge($default, [
     'directory_list' => [
         'src',
     ]
 ]);
 
-$phanConfig['plugins'][] = 'NotFullyQualifiedUsagePlugin';
-$phanConfig['plugins'][] = 'UnknownElementTypePlugin';
+$config['plugins'][] = 'NotFullyQualifiedUsagePlugin';
+$config['plugins'][] = 'UnknownElementTypePlugin';
 
-return $phanConfig;
+return $config;
