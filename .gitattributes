@@ -20,5 +20,6 @@
 /.travis.yml         export-ignore
 /.phan.php           export-ignore
 /phpunit.xml.dist    export-ignore
+/Makefile            export-ignore
 
 * text eol=lf
