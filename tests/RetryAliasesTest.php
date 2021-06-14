@@ -122,7 +122,7 @@ class RetryAliasesTest extends PHPUnit
     {
         $retry = new Retry();
         $retry->setStrategy(new ExponentialStrategy(10));
-        $retry->setWaitCap(1000);
+        $retry->setWaitCap(1000000);
 
         isFalse($retry->jitterEnabled());
         isSame($retry->getWaitTime(3), $retry->getWaitTime(3));
