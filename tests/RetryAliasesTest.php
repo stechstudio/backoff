@@ -73,8 +73,8 @@ class RetryAliasesTest extends PHPUnit
 
         // We expect that this took just a bit over the 100ms that we slept
         isTrue(
-            $elapsedMS > 100 && $elapsedMS < 200,
-            "Expected elapsedMS between 100 & 200, got: {$elapsedMS}"
+            $elapsedMS > 100 && $elapsedMS < 300,
+            "Expected elapsedMS between 100 & 300, got: {$elapsedMS}"
         );
     }
 
@@ -97,8 +97,8 @@ class RetryAliasesTest extends PHPUnit
 
         // We expect that this took just a bit over the 100ms that we slept
         isTrue(
-            $elapsedMS > 90 && $elapsedMS < 150,
-            "Expected elapsedMS between 90 & 150, got: {$elapsedMS}"
+            $elapsedMS > 90 && $elapsedMS < 250,
+            "Expected elapsedMS between 90 & 250, got: {$elapsedMS}"
         );
     }
 
