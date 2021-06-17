@@ -121,19 +121,19 @@ class RetryAliasesTest extends PHPUnit
     public function testJitter()
     {
         $retry = new Retry();
-        $retry->setStrategy(new ExponentialStrategy(10));
+        $retry->setStrategy(new ExponentialStrategy(100));
         $retry->setWaitCap(1000000);
 
         isFalse($retry->jitterEnabled());
-        isSame($retry->getWaitTime(3), $retry->getWaitTime(3));
+        isSame($retry->getWaitTime(50), $retry->getWaitTime(50));
 
         $retry->enableJitter();
         isTrue($retry->jitterEnabled());
-        isNotSame($retry->getWaitTime(3), $retry->getWaitTime(3));
+        isNotSame($retry->getWaitTime(10), $retry->getWaitTime(10));
 
         $retry->disableJitter();
         isFalse($retry->jitterEnabled());
-        isSame($retry->getWaitTime(3), $retry->getWaitTime(3));
+        isSame($retry->getWaitTime(50), $retry->getWaitTime(50));
     }
 
     public function testFunctionAlias()
