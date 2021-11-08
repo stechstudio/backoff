@@ -280,7 +280,9 @@ class Retry
     protected function buildStrategy($strategy): callable
     {
         if (\is_string($strategy) && \array_key_exists($strategy, $this->strategies)) {
-            return new $this->strategies[$strategy]();
+            /** @var callable $result */
+            $result = new $this->strategies[$strategy]();
+            return $result;
         }
 
         if (\is_callable($strategy)) {
