@@ -382,6 +382,7 @@ class Retry
     /**
      * @param int $attempt
      * @return $this
+     * @psalm-suppress ArgumentTypeCoercion
      */
     public function wait(int $attempt): self
     {
@@ -404,10 +405,10 @@ class Retry
             $seconds = $microSeconds / $divider1kk;
             $partInMcSeconds = \fmod($seconds, 1) * $divider1kk;
 
-            \sleep((int)$seconds); // It works with seconds
-            \usleep((int)$partInMcSeconds); //  It works with microseconds (1/1000000)
+            \sleep(\abs((int)$seconds)); // It works with seconds
+            \usleep(\abs((int)$partInMcSeconds)); //  It works with microseconds (1/1000000)
         } else {
-            \usleep($microSeconds);
+            \usleep(\abs($microSeconds));
         }
 
         return $this;
@@ -415,7 +416,7 @@ class Retry
 
     /**
      * @param int $attempt
-     * @return int time in milliseconds   . ,,,,,,,,,,,,,,,,,,,,
+     * @return int time in milliseconds
      */
     public function getWaitTime(int $attempt): int
     {
