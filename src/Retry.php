@@ -382,7 +382,6 @@ class Retry
     /**
      * @param int $attempt
      * @return $this
-     * @psalm-suppress ArgumentTypeCoercion
      */
     public function wait(int $attempt): self
     {
