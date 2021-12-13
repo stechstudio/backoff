@@ -23,5 +23,4 @@ namespace JBZoo\Retry\Strategies;
  */
 class Exception extends \JBZoo\Retry\Exception
 {
-
 }

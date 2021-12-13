@@ -23,5 +23,4 @@ namespace JBZoo\Retry;
  */
 class Exception extends \RuntimeException
 {
-
 }
