@@ -19,6 +19,7 @@ namespace JBZoo\Retry;
 
 use Closure;
 use Exception;
+use JBZoo\Retry\Strategies\AbstractStrategy;
 use JBZoo\Retry\Strategies\ConstantStrategy;
 use JBZoo\Retry\Strategies\ExponentialStrategy;
 use JBZoo\Retry\Strategies\LinearStrategy;
@@ -46,10 +47,10 @@ class Retry
      * @var int
      * @deprecated See README.md "Changing defaults"
      */
-    public static $defaultMaxAttempts = self::DEFAULT_MAX_ATTEMPTS;
+    public static int $defaultMaxAttempts = self::DEFAULT_MAX_ATTEMPTS;
 
     /**
-     * @var string
+     * @var string|AbstractStrategy
      * @deprecated See README.md "Changing defaults"
      */
     public static $defaultStrategy = self::DEFAULT_STRATEGY;
@@ -58,7 +59,7 @@ class Retry
      * @var bool
      * @deprecated See README.md "Changing defaults"
      */
-    public static $defaultJitterEnabled = self::DEFAULT_JITTER_STATE;
+    public static bool $defaultJitterEnabled = self::DEFAULT_JITTER_STATE;
 
     /**
      * This callable should take an 'attempt' integer, and return a wait time in milliseconds
@@ -69,7 +70,7 @@ class Retry
     /**
      * @var array
      */
-    protected $strategies = [
+    protected array $strategies = [
         self::STRATEGY_CONSTANT    => ConstantStrategy::class,
         self::STRATEGY_LINEAR      => LinearStrategy::class,
         self::STRATEGY_POLYNOMIAL  => PolynomialStrategy::class,
@@ -79,28 +80,28 @@ class Retry
     /**
      * @var int
      */
-    protected $maxAttempts;
+    protected int $maxAttempts;
 
     /**
      * The max wait time you want to allow, regardless of what the strategy says
      * @var int|null In milliseconds
      */
-    protected $waitCap;
+    protected ?int $waitCap;
 
     /**
      * @var bool
      */
-    protected $useJitter = false;
+    protected bool $useJitter = false;
 
     /**
      * @var int
      */
-    protected $jitterPercent = self::DEFAULT_JITTER_PERCENT;
+    protected int $jitterPercent = self::DEFAULT_JITTER_PERCENT;
 
     /**
      * @var int
      */
-    protected $jitterMinTime = 0;
+    protected int $jitterMinTime = 0;
 
     /**
      * @var array|non-empty-array<int,\Exception>|non-empty-array<int,\Throwable>
@@ -213,7 +214,7 @@ class Retry
      */
     public function setJitterMinCap(int $jitterMinTime): self
     {
-        $this->jitterMinTime = $jitterMinTime < 0 ? 0 : $jitterMinTime;
+        $this->jitterMinTime = \max($jitterMinTime, 0);
         return $this;
     }
 

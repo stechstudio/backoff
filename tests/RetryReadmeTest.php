@@ -26,17 +26,5 @@ class RetryReadmeTest extends AbstractReadmeTest
     /**
      * @var string
      */
-    protected $packageName = 'Retry';
-
-    /**
-     * @inheritDoc
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->params['codefactor'] = true;
-        $this->params['strict_types'] = true;
-        $this->params['travis'] = false;
-    }
+    protected string $packageName = 'Retry';
 }
