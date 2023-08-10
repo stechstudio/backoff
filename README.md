@@ -1,9 +1,8 @@
 # PHP Backoff
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/stechstudio/backoff.svg?style=flat-square)](https://packagist.org/packages/stechstudio/backoff)
-[![Build](https://img.shields.io/scrutinizer/build/g/stechstudio/backoff.svg?style=flat-square)](https://scrutinizer-ci.com/g/stechstudio/backoff)
+![Tests](https://img.shields.io/github/actions/workflow/status/stechstudio/backoff/run-tests.yml?style=flat-square)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Quality Score](https://img.shields.io/scrutinizer/g/stechstudio/backoff.svg?style=flat-square)](https://scrutinizer-ci.com/g/stechstudio/backoff)
 [![Total Downloads](https://img.shields.io/packagist/dt/stechstudio/backoff.svg?style=flat-square)](https://packagist.org/packages/stechstudio/backoff)
 
 Easily wrap your code with retry functionality. This library provides:
