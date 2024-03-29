@@ -307,7 +307,7 @@ class Backoff
             return;
         }
 
-        usleep($this->getWaitTime($attempt) * 1000);
+        usleep(intval($this->getWaitTime($attempt) * 1000));
     }
 
     /**
