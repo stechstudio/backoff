@@ -329,6 +329,7 @@ class Backoff
      */
     protected function cap($waitTime)
     {
+        $waitTime = $waitTime < 0 ? PHP_INT_MAX : $waitTime;
         return is_int($this->getWaitCap())
             ? min($this->getWaitCap(), $waitTime)
             : $waitTime;

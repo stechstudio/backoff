@@ -151,6 +151,13 @@ class BackoffTest extends TestCase
         $this->assertEquals(5000, $b->getWaitTime(2));
     }
 
+    public function testWaitCapOverflow()
+    {
+        $b = new Backoff(1, new LinearStrategy(-1), 1000);
+
+        $this->assertEquals(1000, $b->getWaitTime(1));
+    }
+
     public function testWait()
     {
         $b = new Backoff(1, new LinearStrategy(50));
