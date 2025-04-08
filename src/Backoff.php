@@ -223,8 +223,10 @@ class Backoff
     }
 
     /**
-     * @param callable $callback
+     * @template T
+     * @param callable():T $callback
      *
+     * @phpstan-return (T is void ? null : T)
      * @return mixed
      * @throws Exception
      */
