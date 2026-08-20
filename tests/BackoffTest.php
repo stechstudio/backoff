@@ -307,6 +307,61 @@ class BackoffTest extends TestCase
         $this->assertEquals("success", $result);
     }
 
+    public function testFloatReturningStrategyProducesIntegerWaitTime()
+    {
+        // Closures are a documented strategy type, and nothing constrains one
+        // to return an int. The bundled strategies all cast, which is why this
+        // has gone unnoticed.
+        $b = new Backoff(1, function () {
+            return 15.667;
+        });
+
+        $this->assertIsInt($b->getWaitTime(1), "getWaitTime() is documented @return int");
+    }
+
+    public function testFloatReturningStrategyDoesNotTriggerDeprecationUnderJitter()
+    {
+        $b = new Backoff(1, function () {
+            return 15.667;
+        });
+        $b->enableJitter();
+
+        $deprecations = [];
+        set_error_handler(function ($errno, $errstr) use (&$deprecations) {
+            $deprecations[] = $errstr;
+
+            return true;
+        }, E_DEPRECATED);
+
+        try {
+            $waitTime = $b->getWaitTime(1);
+        } finally {
+            restore_error_handler();
+        }
+
+        // mt_rand() takes int parameters; passing the float through deprecates
+        // on PHP 8.1+ with "Implicit conversion from float ... loses precision".
+        $this->assertSame([], $deprecations, implode(" / ", $deprecations));
+        $this->assertIsInt($waitTime);
+    }
+
+    public function testFloatStrategyBeyondIntMaxDoesNotThrow()
+    {
+        // Without a wait cap, cap() returns the strategy value untouched, so a
+        // large float reached mt_rand() directly and raised
+        // "mt_rand(): Argument #2 ($max) must be of type int, float given".
+        $b = new Backoff(1, function () {
+            return 1e20;
+        });
+        $b->enableJitter();
+
+        $waitTime = $b->getWaitTime(1);
+
+        $this->assertIsInt($waitTime);
+        $this->assertGreaterThanOrEqual(0, $waitTime);
+        $this->assertLessThanOrEqual(PHP_INT_MAX, $waitTime);
+    }
+
     public function testJitter()
     {
         $b = new Backoff(10, new ConstantStrategy(1000));

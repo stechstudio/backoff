@@ -321,7 +321,11 @@ class Backoff
     {
         $waitTime = call_user_func($this->getStrategy(), $attempt);
 
-        return $this->jitter($this->cap($waitTime));
+        // A strategy may be any callable, and nothing requires it to return an
+        // int. jitter() passes this to mt_rand(), whose parameters are int, so
+        // a float deprecates on PHP 8.1+. min() also keeps a float larger than
+        // PHP_INT_MAX from becoming an undefined cast.
+        return $this->jitter((int) min(PHP_INT_MAX, $this->cap($waitTime)));
     }
 
     /**
